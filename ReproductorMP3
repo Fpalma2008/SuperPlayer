@@ -1,3 +1,5 @@
+package reproductormp3;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +19,7 @@ public class ReproductorMP3 {
     public String fileLocation;
     String path=null;
     
+    
    
 public void Pause(){
         if (player!= null)
@@ -33,9 +36,9 @@ public void Pause(){
         }
     }
 
-public void Resume() throws IOException{ 
+public void Resume(){ 
         try {
-            FIS=  new FileInputStream(path);
+            FIS=  new FileInputStream(fileLocation);
             BIS= new BufferedInputStream(FIS);
             
             player= new Player(BIS);
@@ -45,6 +48,8 @@ public void Resume() throws IOException{
         catch (FileNotFoundException | JavaLayerException ex) 
         {
             
+        } catch (IOException ex) {
+            Logger.getLogger(ReproductorMP3.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         new Thread(){
@@ -62,6 +67,20 @@ public void Resume() throws IOException{
         }.start();
     }
 
+public void Stop(){
+        if (player!= null)
+        {
+            player.close();
+            
+            pauseLocation= 0;
+            songTotalLength=0;
+           ReproductorGUI.Display.setText();
+                    
+        }
+    }
+
+
+ 
 public void Play(String path){ 
         try {
             FIS=  new FileInputStream(path);
@@ -79,7 +98,7 @@ public void Play(String path){
             
         } 
         catch (IOException ex) {
-            
+           Logger.getLogger(ReproductorMP3.class.getName()).log(Level.SEVERE,null, ex);
         }
         
         new Thread(){
@@ -99,6 +118,7 @@ public void Play(String path){
 
 
 
+
     public static void main(String[] args) {
         ReproductorGUI ventana= new ReproductorGUI();
         new ReproductorGUI().setVisible(true);
@@ -106,3 +126,4 @@ public void Play(String path){
     }
     
 }
+
