@@ -1,0 +1,113 @@
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.images.Artwork;
+import java.io.*;
+import javax.imageio.ImageIO;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+import org.jaudiotagger.tag.FieldKey;
+
+
+public class Info_cancion {
+    private int Tiempo;
+    private String Rutacancion,BPM,Titulo,Genero,Album,Year,RutaImagen=null,Artista;
+    Tag tag;
+    private Artwork ImagenP;
+    public Info_cancion(){
+      
+    }
+    public void metadata(String Rutacancion){
+        this.Rutacancion=Rutacancion;
+        File ArchivoOrigen=new File(Rutacancion);
+        AudioFile audioFile= AudioFileIO.read(ArchivoOrigen);
+        Tiempo=audioFile.getAudioHeader().getTrackLength();
+        tag=audioFile.getTag();
+        
+        Titulo=tag.getFirst(FieldKey.TITLE);
+        if(Titulo.equals("")){
+            Titulo="Desconocido";
+        
+        }
+        Genero=tag.getFirst(FieldKey.GENRE);
+        if (Genero.equals("")||Genero.equals("Género desconocido")){
+               Genero="Desconocido";
+        }
+        Artista=tag.getFirst(FieldKey.ARTIST);
+        if(Artista.equals("")){
+            Artista="Desconocido";
+           
+        }
+        Album=tag.getFirst(FieldKey.ALBUM);
+        if (Album.equals("")){
+            Album="Desconocido";
+            
+        }
+      
+        Year=tag.getFirst(FieldKey.YEAR);
+        if(Year.equals("")){
+            Year="Desconocido";
+        }
+        
+        BPM=tag.getFirst(FieldKey.FBPM);
+        ImagenP=tag.getFirstArtwork();              
+                
+    }
+public void GuardarImagen(){
+try{
+    InputStream RecibirDatos=new ByteArrayInputStream(ImagenP.getBinaryData());
+    BufferedImage bImageFromConvert=ImageIO.read(RecibirDatos);
+    int w=bImageFromConvert.getWidth();
+    int h=bImageFromConvert.getHeight();
+    BufferedImage bufim=new BufferedImage(300,300,bImageFromConvert.getType());
+    Graphics2D g=bufim.createGraphics();
+    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g.drawImage(bImageFromConvert,0,0,300,300,0,0,w,h, null);
+    g.dispose();
+    RutaImagen=Rutacancion+".jpg";
+    File JPG=new File(RutaImagen);
+    ImageIO.write(bufim,"jpg",JPG);
+    
+   }catch(Exception e){
+       this.RutaImagen=null;
+   }
+
+}
+public String getImagen(){
+    return this.RutaImagen;
+}
+public int getTiempo(){
+    return Tiempo;
+}
+public String Titulo(){
+    return this.Titulo;
+}
+public String getGenero(){
+    return this.Genero;
+}
+public String getAlbum(){
+    return this.Album;
+}
+public String getYear(){
+    return this.Year;
+}
+public String getArtista(){
+   return this.Artista;
+}
+
+public int getTiempoMinutos(){
+    return Tiempo/60;
+}
+public void setTitulo(String m){
+    this.Titulo=m;
+}
+public void setArtista(String m){
+    this.Artista=m;
+}
+              
+ 
+    
+            
+    
+}
